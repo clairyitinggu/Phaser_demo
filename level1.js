@@ -62,20 +62,20 @@ function create() {
 
   this.anims.create({
     key: "left",
-    frames: this.anims.generateFrameNumbers("dude", { start: 0, end: 3 }),
+    frames: this.anims.generateFrameNumbers("dude", { start: 0, end: 9 }),
     frameRate: 10,
     repeat: -1
   });
 
-  this.anims.create({
-    key: "turn",
-    frames: [{ key: "dude", frame: 4 }],
-    frameRate: 20
-  });
+  // this.anims.create({
+  //   key: "turn",
+  //   frames: [{ key: "dude", frame: 4 }],
+  //   frameRate: 20
+  // });
 
   this.anims.create({
     key: "right",
-    frames: this.anims.generateFrameNumbers("dude", { start: 5, end: 8 }),
+    frames: this.anims.generateFrameNumbers("dude", { start: 0, end: 9 }),
     frameRate: 10,
     repeat: -1
   });
@@ -87,24 +87,22 @@ function update() {
     player.setVelocityX(-160);
 
     player.anims.play("right", true);
+    player.flipX = true;
   } else if (cursors.right.isDown) {
     player.setVelocityX(160);
 
     player.anims.play("right", true);
-  }
-  else if (cursors.up.isDown){
+    player.flipX = false;
+  } else if (cursors.up.isDown) {
     player.setVelocityY(-160);
-    player.anims.play("right",true);
-  }
-  else if(cursors.down.isDown)
-  {
+    player.anims.play("right", true);
+  } else if (cursors.down.isDown) {
     player.setVelocityY(160);
-    player.anims.play("right",true);
-  } 
-  else {
+    player.anims.play("right", true);
+  } else {
     player.setVelocityX(0);
     player.setVelocityY(0);
-    player.anims.play("turn");
+    // player.anims.play("turn");
   }
 
   if (cursors.up.isDown && player.body.touching.down) {
