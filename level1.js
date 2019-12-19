@@ -13,7 +13,7 @@ const config = {
     default: "arcade",
     arcade: {
       gravity: { y: 0 },
-      debug: false
+      debug: true
     }
   },
   scene: {
@@ -60,11 +60,15 @@ function create() {
     .refreshBody();
 
   player = this.physics.add.sprite(210, 150, "dude");
+  player.body.width = 50;
+
   player.setBounce(0.2);
   player.setCollideWorldBounds(true);
 
   kingpig = this.physics.add.sprite(300, 150, "kingpig");
+  kingpig.body.width = 30;
   pig = this.physics.add.sprite(300, 120, "pig");
+  pig.body.width = 28;
   // *********************dude movement*************************
   this.anims.create({
     key: "left",
@@ -133,7 +137,7 @@ function update() {
     player.setVelocityX(0);
     player.setVelocityY(0);
     kingpig.anims.play("idle_king", true);
-    // pig.anims.play("idle_pig", true);
+    pig.anims.play("idle_pig", true);
   }
 
   if (cursors.up.isDown && player.body.touching.down) {
