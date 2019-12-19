@@ -25,31 +25,34 @@ const config = {
 var player;
 var platforms;
 var cursors;
+var kingpig;
+var pig;
+
 const game = new Phaser.Game(config);
 
 function preload() {
   this.load.image("bg", "assets/bg.png");
   this.load.image("map", "assets/map.png");
-  this.load.image("ground", "assets/ground.png");
-  this.load.image("key", "assets/key.png");
-  this.load.image("door", "assets/door.png");
-  this.load.image("sm", "assets/sm.png");
+  this.load.image("test", "assets/test.png");
 
-  this.load.image("bm", "assets/bm.png");
-
-  //   this.load.image("du", "assets/dude.png");
   this.load.spritesheet("dude", "assets/dude.png", {
     frameWidth: 78,
     frameHeight: 58
+  });
+
+  this.load.spritesheet("kingpig", "assets/kingpig.png", {
+    frameWidth: 38,
+    frameHeight: 28
+  });
+
+  this.load.spritesheet("pig", "assets/pig.png", {
+    frameWidth: 34,
+    frameHeight: 28
   });
 }
 
 var platforms;
 function create() {
-  this.add.image(170, 209, "door");
-  this.add.image(250, 110, "sm");
-  this.add.image(252, 140, "bm");
-  this.add.image(210, 220, "key");
   platforms = this.physics.add.staticGroup();
   platforms
     .create(250, 200, "map")
@@ -60,6 +63,9 @@ function create() {
   player.setBounce(0.2);
   player.setCollideWorldBounds(true);
 
+  kingpig = this.physics.add.sprite(300, 150, "kingpig");
+  pig = this.physics.add.sprite(300, 120, "pig");
+  // *********************dude movement*************************
   this.anims.create({
     key: "left",
     frames: this.anims.generateFrameNumbers("dude", { start: 0, end: 9 }),
@@ -67,20 +73,44 @@ function create() {
     repeat: -1
   });
 
-  // this.anims.create({
-  //   key: "turn",
-  //   frames: [{ key: "dude", frame: 4 }],
-  //   frameRate: 20
-  // });
-
   this.anims.create({
     key: "right",
     frames: this.anims.generateFrameNumbers("dude", { start: 0, end: 9 }),
     frameRate: 10,
     repeat: -1
   });
+  // *********************kingpig movement*************************
+  this.anims.create({
+    key: "idle_king",
+    frames: this.anims.generateFrameNumbers("kingpig", { start: 0, end: 11 }),
+    frameRate: 11,
+    repeat: -1
+  });
+
+  // *********************pig movement*****************************
+  this.anims.create({
+    key: "idle_pig",
+    frames: this.anims.generateFrameNumbers("pig", { start: 0, end: 10 }),
+    frameRate: 10,
+    repeat: -1
+  });
+
+  //********************keyboard**********************************
+
   cursors = this.input.keyboard.createCursorKeys();
   this.physics.add.collider(player, platforms);
+  //*********************destory*********************************
+
+  // this.physics.add.overlap(player, kingpig, () => {
+  //   this.add.text(180, 250, "Game Over", { fontSize: "15px", fill: "#000000" });
+  // });
+  this.physics.add.collider(player, kingpig, () => {
+    kingpig.destroy();
+  });
+
+  this.physics.add.collider(player, pig, () => {
+    pig.destroy();
+  });
 }
 function update() {
   if (cursors.left.isDown) {
@@ -102,7 +132,8 @@ function update() {
   } else {
     player.setVelocityX(0);
     player.setVelocityY(0);
-    // player.anims.play("turn");
+    kingpig.anims.play("idle_king", true);
+    // pig.anims.play("idle_pig", true);
   }
 
   if (cursors.up.isDown && player.body.touching.down) {
