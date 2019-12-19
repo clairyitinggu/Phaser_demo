@@ -67,7 +67,7 @@ function create() {
 
   kingpig = this.physics.add.sprite(300, 150, "kingpig");
   kingpig.body.width = 30;
-  pig = this.physics.add.sprite(300, 120, "pig");
+  pig = this.physics.add.sprite(300, 350, "pig");
   pig.body.width = 28;
   // *********************dude movement*************************
   this.anims.create({
