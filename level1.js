@@ -11,7 +11,13 @@ var config = {
 
 var game = new Phaser.Game(config);
 
-function preload() {}
+function preload() {
+  this.load.image("map", "/assets/map.png");
+  this.load.spritesheet("king", "/assets/dude.png", {
+    frameWidth: 100,
+    frameHeight: 100
+  });
+}
 
 function create() {}
 
