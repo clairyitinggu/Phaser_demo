@@ -1,13 +1,59 @@
+//import { ENGINE_METHOD_ALL } from "constants";
+
 /**
  * Author: Michael Hadley, mikewesthad.com
  * Asset Credits:
  *  - Nintendo Mario Tiles, Educational use only
  */
+let content = document.getElementById("status");
+let detectMonsters = function (monster,mainCharacter)
+{
+  let gainEXP = function(exp,character)
+  {
+    character.exp +=exp
+	if(character.exp >= character.nextlevelexp)
+	{
+		let remainexp = character.exp - character.nextlevelexp
+		character.level = character.level + 1
+		character.nextlevelexp = character.nextlevelexp + 7
+		character.attack = character.attack + 5
+		character.exp = remainexp
+		character.maxHP = character.maxHP + 5
+		character.HP = character.maxHP
+  }
+}
+  mainCharacterTurn = true
+  while(mainCharacter.HP>0 && monster.HP>0)
+  {
+    if(mainCharacterTurn === true)
+    {
+      monster.HP -= mainCharacter.attack
+      mainCharacterTurn = false
+    }
+    else
+    {
+      mainCharacter.HP -= monster.attack
+      mainCharacterTurn = true
+    }
+  }
+  if(mainCharacter.HP<=0)
+    {
+     content.innerHTML = "Game Over!";
+      this.physics.pause();
+      //mainCharacter.setTint(0xff0000);
+    }
+  else
+  {
+    gainEXP(monster.exp,mainCharacter)
+    content.innerHTML = "HP:"+mainCharacter.HP+" / " + mainCharacter.maxHP + "ATTACK:"+ mainCharacter.attack + "Level: " + mainCharacter.level + "Exp:" + mainCharacter.exp + " / " + mainCharacter.nextlevelexp
+    monster.destroy()
+  }
 
+}
 const config = {
   type: Phaser.AUTO,
   width: 500,
-  height: 400,
+  height: 500,
   zoom: 1,
   physics: {
     default: "arcade",
@@ -22,19 +68,19 @@ const config = {
     update: update
   }
 };
+
 var player;
-var platforms;
-var cursors;
-var kingpig;
 var pig;
-
+var kingpig;
+var platforms ;
+var cursors;
+var Text;
 const game = new Phaser.Game(config);
-
 function preload() {
   this.load.image("bg", "assets/bg.png");
   this.load.image("map", "assets/map.png");
   this.load.image("test", "assets/test.png");
-
+  //game.load.bitmapFont('carrier_command', 'assets/fonts/bitmapFonts/carrier_command.png', 'assets/fonts/bitmapFonts/carrier_command.xml');
   this.load.spritesheet("dude", "assets/dude.png", {
     frameWidth: 78,
     frameHeight: 58
@@ -49,9 +95,9 @@ function preload() {
     frameWidth: 34,
     frameHeight: 28
   });
+
 }
 
-var platforms;
 function create() {
   platforms = this.physics.add.staticGroup();
   platforms
@@ -61,14 +107,25 @@ function create() {
 
   player = this.physics.add.sprite(210, 150, "dude");
   player.body.width = 50;
-
+  player.HP = 10;
+  player.maxHP = 10;
+  player.attack = 5;
+  player.level = 0;
+  player.exp = 0;
+  player.nextlevelexp = 1;
   player.setBounce(0.2);
   player.setCollideWorldBounds(true);
 
   kingpig = this.physics.add.sprite(300, 150, "kingpig");
+  kingpig.HP = 15;
+  kingpig.attack = 7;
+  kingpig.exp = 10;
   kingpig.body.width = 30;
   pig = this.physics.add.sprite(300, 350, "pig");
   pig.body.width = 28;
+  pig.exp = 7;
+  pig.attack = 2;
+  pig.HP = 10;
   // *********************dude movement*************************
   this.anims.create({
     key: "left",
@@ -108,39 +165,42 @@ function create() {
   // this.physics.add.overlap(player, kingpig, () => {
   //   this.add.text(180, 250, "Game Over", { fontSize: "15px", fill: "#000000" });
   // });
-  this.physics.add.collider(player, kingpig, () => {
-    kingpig.destroy();
-  });
+  console.log(typeof player);
+  console.log(typeof kingpig);
+  let a = function(player,enemy){
+    enemy.destroy()
+  }
+  this.physics.add.overlap(kingpig, player, detectMonsters);
 
-  this.physics.add.collider(player, pig, () => {
-    pig.destroy();
-  });
+  this.physics.add.overlap(pig, player, detectMonsters);
+
 }
+
+function empty()
+{
+
+}
+
 function update() {
+
   if (cursors.left.isDown) {
-    player.setVelocityX(-160);
+    player.setVelocity(-160,0);
 
     player.anims.play("right", true);
     player.flipX = true;
   } else if (cursors.right.isDown) {
-    player.setVelocityX(160);
-
+    player.setVelocity(160,0);
     player.anims.play("right", true);
     player.flipX = false;
   } else if (cursors.up.isDown) {
-    player.setVelocityY(-160);
+    player.setVelocity(0,-160);
     player.anims.play("right", true);
   } else if (cursors.down.isDown) {
-    player.setVelocityY(160);
+    player.setVelocity(0,160);
     player.anims.play("right", true);
   } else {
     player.setVelocityX(0);
     player.setVelocityY(0);
-    kingpig.anims.play("idle_king", true);
-    pig.anims.play("idle_pig", true);
-  }
-
-  if (cursors.up.isDown && player.body.touching.down) {
-    player.setVelocityY(-330);
   }
 }
+
